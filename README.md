@@ -2,6 +2,8 @@
 
 - Create React App
 - Configure TailwindCss and other Requirements
+- Header
+- Login Form
 
 # Features
 - Login/Signup Page (Render Firstly)
