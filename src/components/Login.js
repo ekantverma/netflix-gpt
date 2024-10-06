@@ -1,11 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Header from "./Header";
+import { checkValidData } from "../utils/validate";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const name = useRef(null);
+  const email = useRef(null);
+  const password = useRef(null);
 
   const toggleSignUp = () => {
     setIsSignInForm(!isSignInForm);
+  };
+
+  const handleButtonClick = () => {
+    // Validate the form data
+    const errorMsg = checkValidData(
+      email.current.value,
+      password.current.value
+    );
+    setErrorMessage(errorMsg);
+    if (errorMsg) return;
+
+    // SignIn / SignUp Logic
+    if (!isSignInForm) {
+      // SingUp Logic
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + " - " + errorMessage);
+        });
+    } else {
+      // Sign In Logic
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode+" - "+errorMessage);
+        });
+    }
   };
 
   return (
@@ -20,12 +78,15 @@ const Login = () => {
           alt="bg"
         />
         {/* Black Overlay */}
-        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <div className="absolute inset-0 bg-black opacity-20"></div>
       </div>
 
       {/* Form Container */}
       <div className="relative z-10 w-full flex justify-center items-start">
-        <form className="w-[90%] max-w-[400px] p-8 bg-black bg-opacity-80 text-white rounded-md mt-20">
+        <form
+          onSubmit={(e) => e.preventDefault}
+          className="w-[90%] max-w-[400px] p-8 bg-black bg-opacity-80 text-white rounded-md mt-14"
+        >
           <h1 className="text-3xl font-bold mb-4">
             {isSignInForm ? "Sign In" : "Sign Up"}
           </h1>
@@ -33,6 +94,7 @@ const Login = () => {
           {/* Full Name Field for Sign Up */}
           {!isSignInForm && (
             <input
+              ref={name}
               type="text"
               placeholder="Full Name"
               className="p-3 my-2 w-full bg-gray-700 opacity-70 rounded-md"
@@ -41,6 +103,7 @@ const Login = () => {
 
           {/* Common Fields */}
           <input
+            ref={email}
             type="text"
             placeholder="Email Address"
             className="p-3 my-4 w-full bg-gray-700 opacity-70 rounded-md"
@@ -48,6 +111,7 @@ const Login = () => {
 
           {/* Password Input */}
           <input
+            ref={password}
             type="password"
             placeholder="Password"
             className="p-3 my-2 w-full bg-gray-700 opacity-70 rounded-md"
@@ -62,10 +126,13 @@ const Login = () => {
             />
           )}
 
+          <p className="text-red-500 font-bold text-md py-2">{errorMessage}</p>
+
           {/* Submit Button */}
           <button
             type="submit"
             className="p-2 my-2 bg-red-700 w-full rounded-lg"
+            onClick={handleButtonClick}
           >
             {isSignInForm ? "Sign In" : "Sign Up"}
           </button>
@@ -84,7 +151,11 @@ const Login = () => {
                 Forgot Password?
               </a>
               <div className="mt-3 flex items-center">
-                <input type="checkbox" id="rememberMe" className="mr-2 bg-white" />
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  className="mr-2 bg-white"
+                />
                 <label htmlFor="rememberMe">Remember Me</label>
               </div>
             </>
@@ -94,7 +165,11 @@ const Login = () => {
           <div className="mt-6">
             <p>
               {isSignInForm ? "New to Netflix?" : "Already have an account?"}{" "}
-              <a href="#" className="text-white font-bold hover:underline" onClick={toggleSignUp}>
+              <a
+                href="#"
+                className="text-white font-bold hover:underline"
+                onClick={toggleSignUp}
+              >
                 {isSignInForm ? "Sign up now." : "Sign in here."}
               </a>
             </p>
@@ -103,7 +178,8 @@ const Login = () => {
           {/* reCAPTCHA notice */}
           <div className="mt-4 text-sm text-gray-400">
             <p>
-              This page is protected by Google reCAPTCHA to ensure you're not a bot.{" "}
+              This page is protected by Google reCAPTCHA to ensure you're not a
+              bot.{" "}
               <a href="#" className="text-blue-400 hover:underline">
                 Learn more.
               </a>
