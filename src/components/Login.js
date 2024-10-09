@@ -53,6 +53,7 @@ const Login = () => {
               dispatch(
                 addUser({
                   uid: uid,
+                  
                   email: email,
                   displayName: displayName,
                   photoURL: photoURL,
@@ -89,6 +90,7 @@ const Login = () => {
         });
     }
   };
+
 
   return (
     <div className="relative h-[full] w-full bg-black">
