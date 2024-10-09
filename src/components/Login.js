@@ -20,6 +20,7 @@ const Login = () => {
   const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
+  const confirmPass = useRef(null);
 
   const toggleSignUp = () => {
     setIsSignInForm(!isSignInForm);
@@ -146,6 +147,7 @@ const Login = () => {
           {/* Confirm Password Field for Sign Up */}
           {!isSignInForm && (
             <input
+            ref={confirmPass}
               type="password"
               placeholder="Confirm Password"
               className="p-3 my-2 w-full bg-gray-700 opacity-70 rounded-md"
