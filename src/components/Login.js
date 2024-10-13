@@ -92,7 +92,6 @@ const Login = () => {
     }
   };
 
-
   return (
     <div className="relative h-[full] w-full bg-black">
       <Header />
