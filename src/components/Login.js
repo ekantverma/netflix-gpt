@@ -12,7 +12,8 @@ import { addUser } from "../utils/userSlice";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(null);  const dispatch = useDispatch()
+  const [errorMessage, setErrorMessage] = useState(null);
+  const dispatch = useDispatch();
 
   const name = useRef(null);
   const email = useRef(null);
@@ -24,7 +25,6 @@ const Login = () => {
   };
 
   const handleButtonClick = () => {
-    // Validate the form data
     const errorMsg = checkValidData(
       email.current.value,
       password.current.value
@@ -32,9 +32,11 @@ const Login = () => {
     setErrorMessage(errorMsg);
     if (errorMsg) return;
 
-    // SignIn / SignUp Logic
     if (!isSignInForm) {
-      // SingUp Logic
+      if (password.current.value !== confirmPass.current.value) {
+        setErrorMessage("Passwords do not match");
+        return;
+      }
       createUserWithEmailAndPassword(
         auth,
         email.current.value,
@@ -62,25 +64,27 @@ const Login = () => {
             });
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrorMessage(errorCode + " - " + errorMessage);
+          setErrorMessage(error.code + " - " + error.message);
         });
     } else {
-      // Sign
       signInWithEmailAndPassword(
         auth,
         email.current.value,
         password.current.value
       )
         .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
+          const { uid, email, displayName, photoURL } = userCredential.user;
+          dispatch(
+            addUser({
+              uid: uid,
+              email: email,
+              displayName: displayName,
+              photoURL: photoURL,
+            })
+          );
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrorMessage(errorCode + " - " + errorMessage);
+          setErrorMessage(error.code + " - " + error.message);
         });
     }
   };
@@ -103,7 +107,9 @@ const Login = () => {
       {/* Form Container */}
       <div className="relative z-10 w-full flex justify-center items-start">
         <form
-          onSubmit={(e) => e.preventDefault}
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
           className="w-[90%] max-w-[400px] p-8 bg-black bg-opacity-80 text-white rounded-md mt-14"
         >
           <h1 className="text-3xl font-bold mb-4">
@@ -139,7 +145,7 @@ const Login = () => {
           {/* Confirm Password Field for Sign Up */}
           {!isSignInForm && (
             <input
-            ref={confirmPass}
+              ref={confirmPass}
               type="password"
               placeholder="Confirm Password"
               className="p-3 my-2 w-full bg-gray-700 opacity-70 rounded-md"
@@ -152,7 +158,10 @@ const Login = () => {
           <button
             type="submit"
             className="p-2 my-2 bg-red-700 w-full rounded-lg"
-            onClick={handleButtonClick}
+            onClick={(e) => {
+              e.preventDefault(); // Prevent page refresh
+              handleButtonClick(); // Trigger login logic
+            }}
           >
             {isSignInForm ? "Sign In" : "Sign Up"}
           </button>
