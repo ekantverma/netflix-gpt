@@ -6,3 +6,11 @@ export const LOGO =
 
 export const USER_AVATAR =
   "https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png";
+
+export const API_OPTIONS = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2ZDAyYWJhNjcwYzUzOWNkYjQzOTBiOGQzNjE2NTkzNCIsIm5iZiI6MTcyOTI3MDYwNS42NzgwNjEsInN1YiI6IjY3MTEzODcwY2Y4ZGU4NzdiNDlmZGIyMSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.DIDeiaQ5JZFhkhd7FixBDQNaj0N64LzZRoopeaQcFJY'
+  }
+};
