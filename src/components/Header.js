@@ -24,6 +24,8 @@ const Header = () => {
       });
   };
 
+  const daa = ()
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -42,13 +44,14 @@ const Header = () => {
         dispatch(removeUser());
         navigate("/");
       }
-    });
+  });
 
     // Unsubscribe when component unmounts
     return () => {
       unsubscribe();
     };
   }, []);
+
 
   return (
     <>
